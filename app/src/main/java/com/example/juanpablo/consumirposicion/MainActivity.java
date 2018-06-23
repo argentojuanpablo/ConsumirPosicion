@@ -103,7 +103,7 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
 
     private void consumirPosicion( ){
 
-       String url = "https://virginal-way.000webhostapp.com/consumirPosicion.php?";
+       String url = "https://virginal-way.000webhostapp.com/consumirPosicionONLINE.php?";
        //String url = "http://192.168.0.70/login/consumirPosicion.php?";
        Log.d("url1",url);
        jrq = new JsonObjectRequest(Request.Method.GET,url,null,this,this);
