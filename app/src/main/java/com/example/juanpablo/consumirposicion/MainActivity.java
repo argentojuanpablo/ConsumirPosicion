@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
     RequestQueue rq;
     JsonRequest jrq;
 
-
+    time time;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
         tvLatitud = (TextView)findViewById(R.id.tvLatitud);
         tvLongitud = (TextView)findViewById(R.id.tvLongitud);
         rq = Volley.newRequestQueue(this);
-        time time = new time();
+        time = new time();
         time.execute();
 
 
@@ -82,8 +82,10 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
 
         @Override
         protected Boolean doInBackground(Void... voids) {
+
             for (int i=1; i<=2 ;i++){
                 hilo();
+                if (isCancelled()) break;
             }
 
             return true;
@@ -93,7 +95,7 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
         protected void onPostExecute(Boolean aBoolean) {
             ejecutar();
             consumirPosicion();
-            Toast.makeText(MainActivity.this,"consumiendo..",Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this,"Consumiendo...",Toast.LENGTH_SHORT).show();
 
         }
     }
@@ -101,11 +103,11 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
 
     private void consumirPosicion( ){
 
-       String url = "http://192.168.0.70/login/consumirPosicion.php?";
+       String url = "https://virginal-way.000webhostapp.com/consumirPosicion.php?";
+       //String url = "http://192.168.0.70/login/consumirPosicion.php?";
        Log.d("url1",url);
        jrq = new JsonObjectRequest(Request.Method.GET,url,null,this,this);
-        Log.d("url2",url);
-        rq.add(jrq);
+       rq.add(jrq);
     }
 
     @Override
@@ -131,6 +133,13 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
         }
 
         Toast.makeText(this,"TODO OK ", Toast.LENGTH_SHORT).show();
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        time.cancel(true);
+        super.onBackPressed();
 
     }
 }
