@@ -6,10 +6,12 @@ import android.content.Context;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -52,38 +54,59 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        //tvUbicacion = (TextView)findViewById(R.id.tvUbicacion);
         tvLatitud = (TextView)findViewById(R.id.tvLatitud);
         tvLongitud = (TextView)findViewById(R.id.tvLongitud);
-        //btnGPS = (Button)findViewById(R.id.btnGPS);
-
         rq = Volley.newRequestQueue(this);
-        consumirPosicion();
-
-
+        time time = new time();
+        time.execute();
 
 
     }
+
+    public void hilo(){
+        try{
+            Thread.sleep(1000);
+        }catch(InterruptedException e){
+            e.printStackTrace();
+        }
+    }
+
+    public void ejecutar(){
+        time time = new time();
+        Log.d("time: ", "adentro de time");
+        time.execute();
+    }
+
+    public class time extends AsyncTask<Void,Integer,Boolean>
+    {
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            for (int i=1; i<=2 ;i++){
+                hilo();
+            }
+
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            ejecutar();
+            consumirPosicion();
+            Toast.makeText(MainActivity.this,"consumiendo..",Toast.LENGTH_SHORT).show();
+
+        }
+    }
+
 
     private void consumirPosicion( ){
 
-       String url = "http://192.168.0.85/login/consumirPosicion.php?";
-        jrq = new JsonObjectRequest(Request.Method.GET,url,null,this,this);
-
+       String url = "http://192.168.0.70/login/consumirPosicion.php?";
+       Log.d("url1",url);
+       jrq = new JsonObjectRequest(Request.Method.GET,url,null,this,this);
+        Log.d("url2",url);
         rq.add(jrq);
     }
-
-
-/*
-    private void compartirPosicion( Double lat, Double lon ){
-
-        String url = "http://192.168.0.82/login/actualizarPosicion.php?x="+lat.toString()+"&y="+lon.toString();
-
-        jrq = new JsonObjectRequest(Request.Method.GET,url,null,this,this);
-        rq.add(jrq);
-    }
-*/
 
     @Override
     public void onErrorResponse(VolleyError error) {
@@ -97,31 +120,17 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
 
         JSONArray jsonArray = response.optJSONArray("coordenadas");
         JSONObject jsonObject = null;
-
         try{
 
             jsonObject = jsonArray.getJSONObject(0);
             tvLatitud.setText(jsonObject.optString("latitud"));
             tvLongitud.setText(jsonObject.optString("longitud"));
 
-/*
-            arr = new String[jsonArray.length()];
-            for(int i = 0; i < jsonArray.length(); i++){
-
-                //arr[i] = jsonArray.getString(i);
-                arr[i] = jsonArray.getJSONObject(i).toString();
-
-                }
-
-            tvLatitud.setText(arr[0]);
-            tvLongitud.setText(arr[1]);
-*/
-
         }catch (JSONException e){
             e.printStackTrace();
         }
 
-        Toast.makeText(this,"todo ok: ", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this,"TODO OK ", Toast.LENGTH_SHORT).show();
 
     }
 }
